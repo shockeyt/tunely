@@ -9,24 +9,28 @@
 /* hard-coded data! */
 var sampleAlbums = [];
 sampleAlbums.push({
+            id: 1,
              artistName: 'Ladyhawke',
              name: 'Ladyhawke',
              releaseDate: '2008, November 18',
              genres: [ 'new wave', 'indie rock', 'synth pop' ]
            });
 sampleAlbums.push({
+            id: 2,
              artistName: 'The Knife',
              name: 'Silent Shout',
              releaseDate: '2006, February 17',
              genres: [ 'synth pop', 'electronica', 'experimental' ]
            });
 sampleAlbums.push({
+            id: 3,
              artistName: 'Juno Reactor',
              name: 'Shango',
              releaseDate: '2000, October 9',
              genres: [ 'electronic', 'goa trance', 'tribal house' ]
            });
 sampleAlbums.push({
+            id: 4,
              artistName: 'Philip Wesley',
              name: 'Dark Night of the Soul',
              releaseDate: '2008, September 12',
@@ -39,7 +43,15 @@ sampleAlbums.push({
 
 $(document).ready(function() {
   console.log('app.js loaded!');
-
+  // sampleAlbums.forEach(function(index) {
+  //   renderAlbum(index);
+  // });
+  //renderAlbum(sampleAlbums[0]);
+  $.get('/api/albums', function(res) {
+    res.forEach(function(index) {
+      renderAlbum(index);
+    });
+  });
 });
 
 
@@ -52,7 +64,7 @@ function renderAlbum(album) {
 
   var albumHtml =
   "        <!-- one album -->" +
-  "        <div class='row album' data-album-id='" + "HARDCODED ALBUM ID" + "'>" +
+  "        <div class='row album' data-album-id='" + album.id + "'>" +
   "          <div class='col-md-10 col-md-offset-1'>" +
   "            <div class='panel panel-default'>" +
   "              <div class='panel-body'>" +
@@ -65,15 +77,15 @@ function renderAlbum(album) {
   "                    <ul class='list-group'>" +
   "                      <li class='list-group-item'>" +
   "                        <h4 class='inline-header'>Album Name:</h4>" +
-  "                        <span class='album-name'>" + "HARDCODED ALBUM NAME" + "</span>" +
+  "                        <span class='album-name'>" + album.name + "</span>" +
   "                      </li>" +
   "                      <li class='list-group-item'>" +
   "                        <h4 class='inline-header'>Artist Name:</h4>" +
-  "                        <span class='artist-name'>" +  "HARDCODED ARTIST NAME"+ "</span>" +
+  "                        <span class='artist-name'>" +  album.artistName + "</span>" +
   "                      </li>" +
   "                      <li class='list-group-item'>" +
   "                        <h4 class='inline-header'>Released date:</h4>" +
-  "                        <span class='album-releaseDate'>" + "HARDCODED ALBUM RELEASE" + "</span>" +
+  "                        <span class='album-releaseDate'>" + album.releaseDate + "</span>" +
   "                      </li>" +
   "                    </ul>" +
   "                  </div>" +
@@ -90,5 +102,9 @@ function renderAlbum(album) {
   "          <!-- end one album -->";
 
   // render to the page with jQuery
-
+  $('#albums').append(albumHtml);
 }
+
+//$.get('')
+
+
