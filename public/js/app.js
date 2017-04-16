@@ -57,26 +57,23 @@ $(document).ready(function() {
     });
   
 
-    $('form').on('submit', function(e) {
-      e.preventDefault();
-      //alert('submit clicked');
-      var formData = $(this).serialize();
-      console.log(formData);
 
-      $.ajax({
-        url: '/api/albums',
-        type: 'POST',
-        data: formData,
-        success: console.log("success")
-      });
-
-      $(this).trigger("reset");
-      //$('.form-control').trigger("reset");
-    });
   });
 });
 
 
+
+function buildSongsHtml(songs) {
+
+  var songText = " – "; 
+  songs.forEach(function(song) { 
+      songText = songText + "(" + song.trackNumber + ") " + song.name + " – "; 
+  }); 
+   
+  var songsHtml = songText;
+  return songsHtml;
+
+}
 
 
 
@@ -86,7 +83,7 @@ function renderAlbum(album) {
 
   var albumHtml =
   "        <!-- one album -->" +
-  "        <div class='row album' data-album-id='" + album.id + "'>" +
+  "        <div class='row album' data-album-id='" + album._id + "'>" +
   "          <div class='col-md-10 col-md-offset-1'>" +
   "            <div class='panel panel-default'>" +
   "              <div class='panel-body'>" +
@@ -109,6 +106,10 @@ function renderAlbum(album) {
   "                        <h4 class='inline-header'>Released date:</h4>" +
   "                        <span class='album-releaseDate'>" + album.releaseDate + "</span>" +
   "                      </li>" +
+  "                      <li class='list-group-item'>" +
+  "                        <h4 class='inline-header'>Songs:</h4>" +
+  "                        <span class='album-songs'>" + buildSongsHtml(album.songs) + "</span>" +
+  "                      </li>" +
   "                    </ul>" +
   "                  </div>" +
   "                </div>" +
@@ -116,16 +117,76 @@ function renderAlbum(album) {
 
   "              </div>" + // end of panel-body
 
-  "              <div class='panel-footer'>" +
+  "               <div class='panel-footer'>" +
+  "               <button class='btn btn-primary add-song'>Add Song</button>" +
+  "               </div>" +
   "              </div>" +
 
   "            </div>" +
   "          </div>" +
   "          <!-- end one album -->";
 
+
+
   // render to the page with jQuery
   $('#albums').append(albumHtml);
+  //buildSongsHtml();
+    $('#albums').on('click', '.add-song', function(e) {
+        e.preventDefault();
+        console.log('asdfasdfasdf');
+        var id= $(this).parents('.album').data('album-id'); // "5665ff1678209c64e51b4e7b"
+        console.log('id',id);
+        $('#songModal').data('album-id', id);
+        $('#songModal').modal();
+    });
+
+
+
+    $('form').on('submit', function(e) {
+      e.preventDefault();
+      //alert('submit clicked');
+      var formData = $(this).serialize();
+      console.log(formData);
+
+      $.ajax({
+        url: '/api/albums',
+        type: 'POST',
+        data: formData,
+        success: console.log("success")
+      });
+
+      $(this).trigger("reset");
+      //$('.form-control').trigger("reset");
+    });
+
+
+    $('#saveSong').on('click', function handleNewSongSubmit(e) {
+      e.preventDefault();
+      var newSong = $('#songName').val();
+      var newTrack =  $('#trackNumber').val();
+      console.log(newSong);
+      console.log(newTrack);
+      var albumUrl = $('#songModal').data('album-id');
+      console.log(albumUrl);
+      //console.log('new song serialized', $(this).serialize());
+
+      $.ajax({
+        url: '/api/albums/' + albumUrl + '/songs',
+        type: 'POST',
+        data: {"name": newSong, "trackNumber": newTrack},
+        success: console.log("success " + newSong + newTrack)
+      });
+
+      $('#saveSong').trigger("reset");
+    });
+
+      
+      
+
+ 
 }
+
+
 
 //$.get('')
 
