@@ -2,10 +2,17 @@
 
 //require express in our app
 var express = require('express');
-// generate a new express app and call it 'app'
 var app = express();
-
 var db = require('./models');
+var bodyParser = require('body-parser');
+
+
+
+app.use(bodyParser.urlencoded({extended: true}));
+// generate a new express app and call it 'app'
+
+
+
 // serve static files from public folder
 app.use(express.static(__dirname + '/public'));
 
@@ -15,7 +22,7 @@ app.use(express.static(__dirname + '/public'));
 
 /* hard-coded data */
 
-
+var albumGenres = [];
 
 /**********
  * ROUTES *
@@ -45,12 +52,40 @@ app.get('/api', function api_index (req, res){
   });
 });
 
+//GETS ALL KANYE
 app.get('/api/albums', function album_index(req, res){
   db.Album.find({}, function(err, albums) {
     res.json(albums);
   });
   
 
+});
+
+//CREATE NEW KANYE
+app.post('/api/albums', function new_album(req, res){
+  // console.log(req.body);
+  // db.Album.create({artistName: req.body.artistName, name: req.body.name, releaseDate: req.body.releaseDate, genres: req.body.genres}, function(err, album) {
+  //   res.json(album);
+  // });
+
+  console.log(req.body.artistName);
+  console.log(req.body.name);
+
+  var newAlbum = new db.Album({
+    artistName: req.body.artistName,
+    name: req.body.name,
+    releaseDate: req.body.releaseDate,
+    genres: req.body.genres
+  });
+  newAlbum.save(function (err, album){
+    if (err) {
+      return console.log("save error: " + err);
+    }
+    console.log("saved ", album);
+    console.log(req.body);
+    res.json(album);
+  });
+  albumGenres.push(req.body.genres);
 });
 
 /**********

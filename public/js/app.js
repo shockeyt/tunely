@@ -41,15 +41,37 @@ sampleAlbums.push({
 
 
 
-$(document).ready(function() {
-  console.log('app.js loaded!');
+
+
+  //gets sample albums
   // sampleAlbums.forEach(function(index) {
   //   renderAlbum(index);
   // });
   //renderAlbum(sampleAlbums[0]);
+$(document).ready(function() {
+  console.log('app.js loaded!');
+  //gets db albums
   $.get('/api/albums', function(res) {
     res.forEach(function(index) {
       renderAlbum(index);
+    });
+  
+
+    $('form').on('submit', function(e) {
+      e.preventDefault();
+      //alert('submit clicked');
+      var formData = $(this).serialize();
+      console.log(formData);
+
+      $.ajax({
+        url: '/api/albums',
+        type: 'POST',
+        data: formData,
+        success: console.log("success")
+      });
+
+      $(this).trigger("reset");
+      //$('.form-control').trigger("reset");
     });
   });
 });
