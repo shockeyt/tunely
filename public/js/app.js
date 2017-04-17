@@ -173,7 +173,7 @@ function renderAlbum(album) {
       $.ajax({
         url: '/api/albums/' + albumUrl + '/songs',
         type: 'POST',
-        data: {"name": newSong, "trackNumber": newTrack},
+        data: {name: newSong, trackNumber: newTrack},
         success: console.log("success " + newSong + newTrack)
       });
 
