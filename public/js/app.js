@@ -50,15 +50,73 @@ sampleAlbums.push({
   //renderAlbum(sampleAlbums[0]);
 $(document).ready(function() {
   console.log('app.js loaded!');
+  
   //gets db albums
   $.get('/api/albums', function(res) {
     res.forEach(function(index) {
+      console.log("album from DB is ", index);
       renderAlbum(index);
     });
   
 
 
   });
+
+    $('#albums').on('click', '.add-song', function(e) {
+        e.preventDefault();
+        //console.log('asdfasdfasdf');
+        var id= $(this).parents('.album').data('album-id'); // "5665ff1678209c64e51b4e7b"
+        //console.log('id',id);
+        $('#songModal').data('album-id', id);
+        $('#songModal').modal();
+    });
+
+
+
+    $('form').on('submit', function(e) {
+      e.preventDefault();
+      //alert('submit clicked');
+      var formData = $(this).serialize();
+      //console.log(formData);
+
+      $.ajax({
+        url: '/api/albums',
+        type: 'POST',
+        data: formData,
+        success: console.log("success")
+      });
+
+      $(this).trigger("reset");
+      //$('.form-control').trigger("reset");
+    });
+
+
+    $('#saveSong').on('click', function handleNewSongSubmit(e) {
+      e.preventDefault();
+      var newSong = $('#songName').val();
+      var newTrack =  $('#trackNumber').val();
+      console.log(newSong);
+      console.log(newTrack);
+      var albumUrl = $('#songModal').data('album-id');
+      var entry = {
+        name: newSong,
+        trackNumber: newTrack
+      };
+      console.log(albumUrl);
+      //console.log('new song serialized', $(this).serialize());
+
+      $.ajax({
+        url: '/api/albums/' + albumUrl + '/songs',
+        type: 'POST',
+        data: entry,
+        success: console.log("success " + newSong + newTrack)
+      });
+      $('#songName').val('');
+      $('#trackNumber').val('');
+      $('#songModal').modal('toggle');
+    });
+
+
 });
 
 
@@ -66,8 +124,10 @@ $(document).ready(function() {
 function buildSongsHtml(songs) {
 
   var songText = " – "; 
+  //console.log(songs);
   songs.forEach(function(song) { 
-      songText = songText + "(" + song.trackNumber + ") " + song.name + " – "; 
+      songText = songText + "(" + song.trackNumber + ") " + song.name + " – ";
+      //console.log(song); 
   }); 
    
   var songsHtml = songText;
@@ -79,7 +139,8 @@ function buildSongsHtml(songs) {
 
 // this function takes a single album and renders it to the page
 function renderAlbum(album) {
-  console.log('rendering album:', album);
+  //console.log('rendering album:', album);
+  var songList = buildSongsHtml(album.songs);
 
   var albumHtml =
   "        <!-- one album -->" +
@@ -108,7 +169,7 @@ function renderAlbum(album) {
   "                      </li>" +
   "                      <li class='list-group-item'>" +
   "                        <h4 class='inline-header'>Songs:</h4>" +
-  "                        <span class='album-songs'>" + buildSongsHtml(album.songs) + "</span>" +
+  "                        <span class='album-songs'>" + songList + "</span>" +
   "                      </li>" +
   "                    </ul>" +
   "                  </div>" +
@@ -131,59 +192,7 @@ function renderAlbum(album) {
   // render to the page with jQuery
   $('#albums').append(albumHtml);
   //buildSongsHtml();
-    $('#albums').on('click', '.add-song', function(e) {
-        e.preventDefault();
-        console.log('asdfasdfasdf');
-        var id= $(this).parents('.album').data('album-id'); // "5665ff1678209c64e51b4e7b"
-        console.log('id',id);
-        $('#songModal').data('album-id', id);
-        $('#songModal').modal();
-    });
 
-
-
-    $('form').on('submit', function(e) {
-      e.preventDefault();
-      //alert('submit clicked');
-      var formData = $(this).serialize();
-      console.log(formData);
-
-      $.ajax({
-        url: '/api/albums',
-        type: 'POST',
-        data: formData,
-        success: console.log("success")
-      });
-
-      $(this).trigger("reset");
-      //$('.form-control').trigger("reset");
-    });
-
-
-    $('#saveSong').on('click', function handleNewSongSubmit(e) {
-      e.preventDefault();
-      var newSong = $('#songName').val();
-      var newTrack =  $('#trackNumber').val();
-      console.log(newSong);
-      console.log(newTrack);
-      var albumUrl = $('#songModal').data('album-id');
-      console.log(albumUrl);
-      //console.log('new song serialized', $(this).serialize());
-
-      $.ajax({
-        url: '/api/albums/' + albumUrl + '/songs',
-        type: 'POST',
-        data: {name: newSong, trackNumber: newTrack},
-        success: console.log("success " + newSong + newTrack)
-      });
-
-      $('#saveSong').trigger("reset");
-    });
-
-      
-      
-
- 
 }
 
 

@@ -44,7 +44,7 @@ sampleSongs.push({ name: "All of the Lights",
 sampleSongs.push({ name: 'Guilt Trip',
                    trackNumber: 3
 });
-sampleSongs.push({ name: 'Paranoid',
+sampleSongs.push({ name: 'Paranoid Android',
                    trackNumber: 4
 });
 sampleSongs.push({ name: 'Ultralight Beam',

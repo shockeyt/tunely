@@ -104,53 +104,62 @@ app.post('/api/albums/:id/songs', function new_song(req, res) {
   var newSongName = req.body.name;
   var newSongTrack = req.body.trackNumber;
   //var songIndex = req.params.songs;
-  //console.log(albumId);
-  //console.log(newSongName);
-  //console.log(newSongTrack);
+  console.log(albumId);
+  console.log(newSongName);
+  console.log(newSongTrack);
   //console.log(songIndex);
 
   //posts to song DB but not front end
-  var newSong = new db.Song({
-    name: newSongName,
-    trackNumber: newSongTrack
-  });
+  // var newSong = new db.Song({
+  //   name: newSongName,
+  //   trackNumber: newSongTrack
+  // });
 
-  db.Album.findById(albumId, function(err, foundAlbum) {
-    if (err) {
-      return console.log(err);
-    }
-    foundAlbum.songs.push(newSong);
-    console.log(foundAlbum.songs);
-    newSong.save(function(err, song){
-      if (err) {
-        return console.log("save error: " + err);
-      }
-      console.log("saved ", song);
-      res.json(song);
-    });
-  });
+  // db.Album.findById(albumId, function(err, foundAlbum) {
+  //   if (err) {
+  //     return console.log(err);
+  //   }
+  //   //foundAlbum.songs.push(newSong);
+  //   foundAlbum.songs.push(newSong);
+  //   //console.log(foundAlbum.songs);
+  //   foundAlbum.save(function(err, savedAlbum) {
+  //   if (err) {
+  //     return console.log(err);
+  //   }
+  //   console.log('saved ' + savedAlbum);
+    
+  //   newSong.save(function(err, song){
+  //     if (err) {
+  //       return console.log("save error: " + err);
+  //     }
+  //     console.log("saved ", song);
+  //     res.json(song);
+  //   });
+  //   });
+  // });
 
 
 
   //method 1
-  // db.Album.findById(albumId)
-  //   .populate('songs')
-  //   .exec(function(err, foundAlbum) {
-  //     console.log(foundAlbum);
-  //     if (err) {
-  //       res.status(500).json({error: err.message});
-  //     } else if (foundAlbum === null) {
-  //       res.status(404).json({error: "no album found by id"});
-  //     } else {
-  //       //foundAlbum.songs.push({name: newSongName, trackNumber: newSongTrack});
-  //       foundAlbum.songs.push(req.body);
-  //       console.log(foundAlbum.songs);
-  //       //console.log(req.body);
-  //       foundAlbum.save();
-  //       res.status(201).json(foundAlbum);
-  //     }
-  //   }
-  // );
+  db.Album.findById(albumId)
+    //.populate('songs')
+    .exec(function(err, foundAlbum) {
+      //console.log(foundAlbum);
+      if (err) {
+        res.status(500).json({error: err.message});
+      } else if (foundAlbum === null) {
+        res.status(404).json({error: "no album found by id"});
+      } else {
+        //foundAlbum.songs.push({name: newSongName, trackNumber: newSongTrack});
+        foundAlbum.songs.push(req.body);
+        console.log("the body is ", req.body);
+        //console.log(req.body);
+        foundAlbum.save();
+        console.log(foundAlbum);
+        res.status(201).json(foundAlbum);
+      }
+    }
+  );
 });
 
 /**********
