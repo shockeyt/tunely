@@ -109,17 +109,45 @@ $(document).ready(function() {
         url: '/api/albums/' + albumUrl + '/songs',
         type: 'POST',
         data: entry,
-        success: console.log("success " + newSong + newTrack)
+        success: [function(data) {
+          console.log("success " + newSong + newTrack);
+          $('.album[data-album-id=' + albumUrl + ']').remove();
+          //render new/updated album
+          renderAlbum(data);
+        }]
       });
       $('#songName').val('');
       $('#trackNumber').val('');
       $('#songModal').modal('toggle');
+
+      // $.ajax({
+      //   url: '/api/albums/' + albumUrl,
+      //   type: 'GET',
+      //   success: handleSuccess,
+      //   error: handleError
+      // });
+
+
     });
 
 
 });
 
+function render(data) {
+  renderAlbum(data);
+}
 
+var getSong = [];
+
+function handleSuccess(json) {
+  getSong = json;
+  console.log(getSong);
+  render();
+}
+
+function handleError(e) {
+  console.log("nope");
+}
 
 function buildSongsHtml(songs) {
 
